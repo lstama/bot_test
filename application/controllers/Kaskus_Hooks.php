@@ -19,7 +19,7 @@ class Kaskus_Hooks extends CI_Controller {
 
 			$this->load->helper('auth_helper');
 
-			if ($signature == generateSignature($bot_account->hookSecret, $httpBody, $httpDate)) {
+			if ($signature == generateKaskusBotSignature($bot_account->hookSecret, $httpBody, $httpDate)) {
 
 				$this->load->helper('receive_helper');
 

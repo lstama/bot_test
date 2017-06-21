@@ -21,7 +21,7 @@ if ( ! function_exists('sendMessage'))
 		$temp->load->helper('auth_helper');
 		$temp->load->helper('request_helper');
 
-		$auth = basicAuth($bot_account->username, $bot_account->password);
+		$auth = basicAuthHeader($bot_account->username, $bot_account->password);
 		
 		$content_type  = "application/json";
 
