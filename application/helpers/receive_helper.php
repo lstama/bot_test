@@ -12,6 +12,8 @@ if ( ! function_exists('handleReceivedMessage'))
 		$temp->load->helper('oauth_helper');
 		$temp->load->helper('request_helper');
 		$temp->load->model('session_model');
+		$temp->load->helper('quiz_helper');
+		$temp->load->model('quiz_model');
 
 
 		#'Hello world!' of this bot.
@@ -116,7 +118,9 @@ if ( ! function_exists('handleReceivedMessage'))
 
 			$data = array('last_session' => 'menu');
 			$temp->session_model->update_session($user->username, $data);
-			sendReply($user, 'Hai '.$user->username."!\nAnda sekarang berada di menu utama. Ketik 'stalk' untuk memulai pencarian.");
+			$button = array(button('stalk', 'Stalk Twitter'), button('quiz', 'DOTA 2 Skill Quiz'));
+			$i['interactive'] = interactive(null, null, 'Hai '.$user->username."!\nAnda sekarang berada di menu utama.", $button, null);
+			sendReply($user,  $i);
 			return;
 		}
 
@@ -128,7 +132,30 @@ if ( ! function_exists('handleReceivedMessage'))
 			return;
 		}
 
-		
+		if ($message == 'quiz') {
+
+				$data['last_session'] = 'quiz';
+	    		$temp->session_model->update_session($user->username, $data);
+	    		$temp->quiz_model->delete_quiz($user->username);	
+
+	    		createQuiz($user);
+	    		return;
+			}
+
+			elseif ($user->last_session == 'quiz'){
+
+				$data['last_session'] = 'after_quiz';
+	    		$temp->session_model->update_session($user->username, $data);
+
+	    		answerQuiz($user, $message);
+	    		return;
+
+			}
+
+		#back to main menu
+		$button = button('menu', 'Menu Utama');
+		$i['interactive'] = interactive(null, null, 'Hai '.$user->username."!\nKlik tombol di bawah ini untuk kembali ke menu utama.", [$button], null);
+		sendReply($user,  $i);
 
 	}   
 }
